@@ -3,80 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para ti</title>
+    <title>Para MACC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Lora:ital@1&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #1a1a1a;
+            background: radial-gradient(ellipse at center, #220000 0%, #000000 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
-        }
-
-        /* El Corazón */
-        .heart {
-            background-color: #ff4d4d;
-            display: inline-block;
-            height: 50px;
-            margin: 0 10px;
-            position: relative;
-            top: 0;
-            transform: rotate(-45deg);
-            width: 50px;
-            animation: beat 1.2s infinite;
-            box-shadow: 0 0 20px #ff4d4d;
-        }
-
-        .heart:before,
-        .heart:after {
-            content: "";
-            background-color: #ff4d4d;
-            border-radius: 50%;
-            height: 50px;
-            position: absolute;
-            width: 50px;
-        }
-
-        .heart:before { top: -25px; left: 0; }
-        .heart:after { left: 25px; top: 0; }
-
-        /* Animación de latido */
-        @keyframes beat {
-            0% { transform: scale(1) rotate(-45deg); }
-            50% { transform: scale(1.3) rotate(-45deg); }
-            100% { transform: scale(1) rotate(-45deg); }
-        }
-
-        /* El Texto */
-        .message {
-            margin-top: 60px;
-            text-align: center;
+            font-family: 'Lora', serif;
             color: white;
-            opacity: 0; /* Empieza invisible */
-            animation: fadeIn 3s forwards;
-            animation-delay: 0.5s;
+            overflow: hidden; /* Evita barras de desplazamiento durante animaciones */
         }
 
-        h1 { font-size: 3rem; margin-bottom: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
-        p { font-size: 1.5rem; color: #ffcccc; font-style: italic; }
+        /* --- Contenedor Principal del Corazón --- */
+        .heart-wrapper {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin-bottom: 30px;
+             /* Esto recorta TODO lo que esté dentro (imagen y cuadrícula) en forma de corazón */
+            clip-path: path('M150 270 C 150 270, 0 180, 0 90 C 0 30, 60 0, 105 0 C 135 0, 150 30, 150 30 C 150 30, 165 0, 195 0 C 240 0, 300 30, 300 90 C 300 180, 150 270, 150 270 Z');
+            box-shadow: 0 0 20px rgba(255, 50, 50, 0.5);
+        }
 
-        @keyframes fadeIn {
-            to { opacity: 1; }
+        /* La imagen real */
+        .heart-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Asegura que la imagen cubra todo el espacio sin deformarse */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* La cuadrícula que cubre la imagen */
+        .cover-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 5x5 = 25 baldosas */
+            grid-template-rows: repeat(5, 1fr);
+            z-index: 2; /* Asegura que esté encima de la imagen */
+        }
+
+        .tile {
+            background-color: #000; /* Color de las baldosas que cubren */
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            border: 1px solid #111; /* Pequeño borde para guiar la vista */
+        }
+
+        /* Clase para ocultar una baldosa */
+        .tile.revealed {
+            opacity: 0;
+            transform: scale(0.8); /* Efecto de encogimiento al desaparecer */
+            pointer-events: none;
+        }
+
+        /* --- Botón --- */
+        #buildBtn {
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            background-color: #ff3333;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 50, 50, 0.4);
+            transition: all 0.3s ease;
+            font-family: 'Lora', serif;
+            z-index: 10;
+        }
+
+        #buildBtn:hover {
+            background-color: #ff6666;
+            transform: translateY(-3px);
+        }
+
+        #buildBtn:active {
+            transform: translateY(1px);
+        }
+
+        /* --- Sección Final (Poema y Texto) --- */
+        .final-content {
+            text-align: center;
+            display: none; /* Oculto al inicio */
+            opacity: 0;
+            transition: opacity 2s ease-in;
+            max-width: 80%;
+        }
+
+        .poem {
+            font-style: italic;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #ffcccc;
+        }
+
+        .main-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            margin: 0;
+            color: #ff5555;
+            text-shadow: 0 0 10px rgba(255, 50, 50, 0.8);
+        }
+
+        .signature {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            color: #aaa;
+            letter-spacing: 2px;
+        }
+
+        /* Clase para mostrar el contenido final */
+        .show-final {
+            display: block;
+            opacity: 1;
         }
     </style>
 </head>
 <body>
 
-    <div class="heart"></div>
-
-    <div class="message">
-        <h1>Te amo</h1>
-        <p>Att: MACC</p>
+    <div class="heart-wrapper">
+        <img src="{{ url_for('static', filename='corazon.jpg') }}" alt="Corazón" class="heart-image">
+        <div class="cover-grid" id="grid"></div>
     </div>
+
+    <button id="buildBtn">Construir nuestro corazón</button>
+
+    <div class="final-content" id="finalMessage">
+        <div class="poem">
+            "En cada latido, un paso hacia ti,<br>
+            construyendo juntos lo que sentí.<br>
+            Pieza por pieza, con cada mirada,<br>
+            mi alma a la tuya quedó atada."
+        </div>
+        <h1 class="main-title">Te amo</h1>
+        <p class="signature">Att: MACC</p>
+    </div>
+
+
+    <script>
+        // 1. Configuración inicial
+        const gridContainer = document.getElementById('grid');
+        const buildBtn = document.getElementById('buildBtn');
+        const finalMessage = document.getElementById('finalMessage');
+        let tiles = [];
+        const gridSize = 5; // Cuadrícula de 5x5 = 25 piezas
+
+        // 2. Generar la cuadrícula de baldosas negras
+        for (let i = 0; i < gridSize * gridSize; i++) {
+            const tile = document.createElement('div');
+            tile.classList.add('tile');
+            gridContainer.appendChild(tile);
+            tiles.push(tile); // Guardamos la referencia de cada baldosa
+        }
+
+        // 3. Lógica del botón
+        buildBtn.addEventListener('click', () => {
+            // Filtramos solo las baldosas que aún NO han sido reveladas
+            const unrevealedTiles = tiles.filter(t => !t.classList.contains('revealed'));
+
+            if (unrevealedTiles.length > 0) {
+                // Elegir una baldosa al azar
+                const randomIndex = Math.floor(Math.random() * unrevealedTiles.length);
+                const tileToReveal = unrevealedTiles[randomIndex];
+
+                // Añadir la clase que la hace transparente
+                tileToReveal.classList.add('revealed');
+
+                // Cambiar texto del botón para hacerlo interactivo
+                const texts = ["Un poco más...", "Ya casi...", "Sigue construyendo...", "Creando amor..."];
+                 buildBtn.textContent = texts[Math.floor(Math.random() * texts.length)];
+
+            }
+
+            // Verificar si fue la última pieza (revisamos de nuevo después del clic)
+             const remaining = tiles.filter(t => !t.classList.contains('revealed')).length;
+             if (remaining === 0) {
+                // Si no quedan piezas, ocultar botón y mostrar mensaje final
+                buildBtn.style.display = 'none';
+                finalMessage.classList.add('show-final');
+            }
+        });
+    </script>
 
 </body>
 </html>
